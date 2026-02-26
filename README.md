@@ -3,7 +3,7 @@
 VibeScout is a precision AI scouting tool for Venture Capital firms. It reduces sourcing noise by turning a fund's unique investment thesis into a durable, always-on discovery workflow.
 
 ## 🚀 Live Demo
-[INSERT_YOUR_VERCEL_URL_HERE]
+https://vc-scout-psi.vercel.app/
 
 ## 📦 Mock Data
 The application is seeded with a local dataset located at:
