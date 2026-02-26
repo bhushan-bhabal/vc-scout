@@ -13,6 +13,7 @@ import {
 
 import Link from "next/link";
 import { useState } from "react";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function RootLayout({ children }) {
 
@@ -94,26 +95,32 @@ export default function RootLayout({ children }) {
           </div>
 
 
-          {/* GLOBAL SEARCH */}
-          <div className="px-4 mt-4">
-
-            <div className="flex items-center bg-slate-100 rounded-md px-3 h-10">
-
-              <Search size={16} className="text-slate-400 mr-2"/>
-
+          {/* Global Search Box - Mobile Optimized */}
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault(); // Stop the page from refreshing
+              const formData = new FormData(e.currentTarget);
+              const query = formData.get("globalSearch");
+              if (query) {
+                window.location.href = `/?q=${encodeURIComponent(query)}`;
+                setIsMobileMenuOpen(false); // Close sidebar on mobile after searching
+              }
+            }}
+            className="px-4 mb-4 mt-4"
+          >
+            <div className="flex items-center bg-slate-100 rounded-md px-3 h-10 border border-transparent focus-within:bg-white focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
+              <Search size={16} className="text-slate-400 mr-2" />
               <input
+                name="globalSearch" // Name attribute is needed for FormData
+                type="search"       // "search" type is better for mobile keyboards
+                suppressHydrationWarning
                 placeholder="Global Search..."
-                className="bg-transparent outline-none text-sm w-full"
-                onKeyDown={(e)=>{
-                  if(e.key==="Enter"){
-                    window.location.href=`/?q=${e.target.value}`
-                  }
-                }}
+                className="bg-transparent outline-none text-sm w-full placeholder:text-slate-500"
               />
-
             </div>
-
-          </div>
+            {/* Hidden submit button to allow Enter key to work on all browsers */}
+            <button type="submit" className="hidden" />
+          </form>
 
 
           {/* NAVIGATION */}
@@ -186,7 +193,7 @@ export default function RootLayout({ children }) {
 
         </main>
 
-
+        <Toaster position="top-right" richColors />
       </body>
 
     </html>

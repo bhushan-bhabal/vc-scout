@@ -1,6 +1,8 @@
 "use client";
+
 import React, { useState, useEffect, Suspense } from "react";
 import { mockCompanies } from "@/lib/mockData";
+
 import {
   Table,
   TableBody,
@@ -26,16 +28,16 @@ import {
 } from "lucide-react";
 
 import { useSearchParams } from "next/navigation";
-
+import { toast } from "sonner";
 
 
 function DiscoveryContent() {
 
   const searchParams = useSearchParams();
-  const queryFromUrl = searchParams ? searchParams.get('q') || "" : "";
-
+  const queryFromUrl = searchParams?.get("q") || "";
 
   const [searchTerm, setSearchTerm] = useState("");
+
   const [sortConfig, setSortConfig] = useState({
     key: "name",
     direction: "asc"
@@ -46,9 +48,20 @@ function DiscoveryContent() {
   const itemsPerPage = 5;
 
 
+
+  // Load search from URL ONCE then clear URL
   useEffect(() => {
+
+    if (!queryFromUrl) return;
+
     setSearchTerm(queryFromUrl);
-  }, [queryFromUrl]);
+    setCurrentPage(1);
+
+    // Clean URL after reading search
+    window.history.replaceState({}, "", "/");
+
+  }, []);
+
 
 
 
@@ -60,6 +73,7 @@ function DiscoveryContent() {
       localStorage.getItem("vc_saved_searches") || "[]"
     );
 
+
     if (!saved.includes(searchTerm)) {
 
       const updated = [...saved, searchTerm];
@@ -69,7 +83,15 @@ function DiscoveryContent() {
         JSON.stringify(updated)
       );
 
-      alert(`Search "${searchTerm}" saved!`);
+      toast.success("Search saved!", {
+        description: `"${searchTerm}" added to your library.`,
+      });
+
+    }
+    else {
+
+      toast.info("Search already exists.");
+
     }
 
   };
@@ -116,6 +138,7 @@ function DiscoveryContent() {
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
 
 
+
   const paginated = filtered.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -132,8 +155,6 @@ function DiscoveryContent() {
       </h1>
 
 
-
-      {/* Search */}
 
       <div className="flex flex-col md:flex-row gap-2 max-w-md mb-8">
 
@@ -173,8 +194,6 @@ function DiscoveryContent() {
 
 
 
-      {/* Table */}
-
       <div className="bg-white border rounded-xl shadow-sm overflow-x-auto">
 
         <Table>
@@ -182,9 +201,6 @@ function DiscoveryContent() {
           <TableHeader className="bg-slate-50">
 
             <TableRow>
-
-
-              {/* Company */}
 
               <TableHead
                 className="cursor-pointer"
@@ -197,19 +213,14 @@ function DiscoveryContent() {
 
                   <span className="w-4 flex justify-center">
 
-                    {sortConfig.key === "name" ? (
-
-                      sortConfig.direction === "asc"
+                    {sortConfig.key === "name"
+                      ? sortConfig.direction === "asc"
                         ? <ChevronUp size={14}/>
                         : <ChevronDown size={14}/>
-
-                    ) : (
-
-                      <span className="opacity-0">
-                        <ChevronUp size={14}/>
-                      </span>
-
-                    )}
+                      : <span className="opacity-0">
+                          <ChevronUp size={14}/>
+                        </span>
+                    }
 
                   </span>
 
@@ -218,8 +229,6 @@ function DiscoveryContent() {
               </TableHead>
 
 
-
-              {/* Sector */}
 
               <TableHead
                 className="cursor-pointer"
@@ -232,19 +241,14 @@ function DiscoveryContent() {
 
                   <span className="w-4 flex justify-center">
 
-                    {sortConfig.key === "sector" ? (
-
-                      sortConfig.direction === "asc"
+                    {sortConfig.key === "sector"
+                      ? sortConfig.direction === "asc"
                         ? <ChevronUp size={14}/>
                         : <ChevronDown size={14}/>
-
-                    ) : (
-
-                      <span className="opacity-0">
-                        <ChevronUp size={14}/>
-                      </span>
-
-                    )}
+                      : <span className="opacity-0">
+                          <ChevronUp size={14}/>
+                        </span>
+                    }
 
                   </span>
 
@@ -254,14 +258,9 @@ function DiscoveryContent() {
 
 
 
-              {/* Action Column FIXED */}
-
               <TableHead className="text-right pr-6">
-
                 Action
-
               </TableHead>
-
 
             </TableRow>
 
@@ -275,42 +274,29 @@ function DiscoveryContent() {
 
               <TableRow key={c.id}>
 
-
                 <TableCell className="font-bold">
-
                   {c.name}
-
                 </TableCell>
 
 
                 <TableCell>
-
                   <Badge variant="outline">
-
                     {c.sector}
-
                   </Badge>
-
                 </TableCell>
 
-
-
-                {/* Action Cell FIXED */}
 
                 <TableCell className="text-right pr-6">
 
                   <Link href={`/companies/${c.id}`}>
 
                     <Button size="sm">
-
                       Open Profile
-
                     </Button>
 
                   </Link>
 
                 </TableCell>
-
 
               </TableRow>
 
@@ -322,20 +308,14 @@ function DiscoveryContent() {
 
 
 
-        {/* Pagination */}
-
         <div className="p-4 border-t flex justify-between items-center text-sm text-slate-500">
 
           <span>
-
             Page {currentPage} of {totalPages}
-
           </span>
 
 
-
           <div className="flex gap-2">
-
 
             <Button
               variant="outline"
@@ -369,11 +349,9 @@ function DiscoveryContent() {
 
             </Button>
 
-
           </div>
 
         </div>
-
 
       </div>
 

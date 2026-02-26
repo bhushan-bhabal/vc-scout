@@ -5,7 +5,6 @@ import OpenAI from 'openai';
 export async function POST(req) {
   try {
     const { url, thesis } = await req.json();
-    console.log("Enriching:", url);
 
     // 1. Setup Default "Simulated" data in case APIs fail
     let finalData = {
